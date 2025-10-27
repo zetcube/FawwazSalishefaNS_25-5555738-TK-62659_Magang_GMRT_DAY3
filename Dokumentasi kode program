@@ -1,0 +1,79 @@
+//Nama: Fawwaz Salishefa Naimi Santosa
+//NIM: 25/555739/TK?62659
+
+#include <ESP32Servo.h> //Memasukkan library servo untuk ESP32
+#include <MPU6050_tockn.h> //Memasukkan llibraryPU6050
+#include <Wire.h> //Library untuk wire.h untuk SDA dan SCL
+
+MPU6050 mpu(Wire); //Membuat objek mpu
+
+Servo servo1; //Membuat objesk servo1-5
+Servo servo2;
+Servo servo3;
+Servo servo4;
+Servo servo5;
+
+void setup() {
+  Serial.begin(115200); //Inisialisasi komunikasi 
+  Wire.begin(); //Inisialisasi SDA dan SCL
+  mpu.begin(); //Inisialisasi mpu
+  mpu.calcGyroOffsets(true); //Fungsi dari MPU6050_tockn.h untuk kalibrasi offset awal bernilai true
+
+  servo1.attach(13);  //Menyambungkan pin ke servo1-5
+  servo2.attach(12); 
+  servo3.attach(14);   
+  servo4.attach(27);   
+  servo5.attach(26);  
+
+  servo1.write(90); //Inisialisasi posisi awal 
+  servo2.write(90);
+  servo3.write(90);
+  servo4.write(90);
+  servo5.write(90);
+
+  delay(1000); //Delay waktu 1 detik
+}
+
+void loop() {
+  mpu.update(); //Mengupdate data dari mpu tiap kali loop berjalan
+
+  float roll = mpu.getAngleX();  //Mendapatkan nilai sudut dari sensor mpu untuk roll
+  float pitch = mpu.getAngleY();  //Mendapatkan nilai sudut dari sensor mpu untuk pitch
+  float yaw = mpu.getAngleZ();  //Mendapatkan nilai sudut dari sensor mpu untuk yaq
+
+  if(roll > 0) {      //Selection jika angle roll bernilai positif maka servo berputar 90derajat ke kiri 
+    servo1.write(0); 
+    servo2.write(0);
+  }else if(roll < 0){  //Selection jika angle roll bernilai negatif maka servo berputar 90derajat ke kanan 
+    servo1.write(180);
+    servo2.write(180);
+  } else {            //jika tidak ada sensor maka tetap pada posisi awal
+    servo1.write(90);
+    servo2.write(90);
+  }
+
+  if(pitch > 0) {      //Selection jika angle roll bernilai positif maka servo berputar 90derajat ke kanan 
+    servo3.write(180);
+    servo4.write(180);
+  }else if(pitch < 0){ //Selection jika angle roll bernilai negatif maka servo berputar 90derajat ke kiri 
+    servo3.write(0);
+    servo4.write(0);
+  }else {             //jika tidak ada sensor maka tetap pada posisi awal
+    servo3.write(90);
+    servo4.write(90);
+  }
+
+  if(yaw > 0) {         //Selection jika angle yaw bernilai positif maka servo berputar 90derajat ke kanan 
+    servo5.write(180);  //lalu berhenti 1detik dan kembali ke posisi awal
+    delay(1000);
+    servo5.write(90);
+  } else if(yaw < 0){    //Selection jika angle yaw bernilai negatif maka servo berputar 90derajat ke kiri 
+    servo5.write(0);     //lalu berhenti 1detik dan kembali ke posisi awal
+    delay(1000);
+    servo5.write(90);
+  }else{                //jika tidak ada sensor maka tetap pada posisi awal
+    servo5.write(90);
+  }
+
+  delay(300);
+}
