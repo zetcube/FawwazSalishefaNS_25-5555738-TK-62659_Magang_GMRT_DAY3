@@ -38,10 +38,10 @@ void loop() {
   float pitch = mpu.getAngleY();  
   float yaw = mpu.getAngleZ();    
 
-  if(roll > 3) {
+  if(roll > 0) {
     servo1.write(0);
     servo2.write(0);
-  }else if(roll < 3){
+  }else if(roll < 0){
     servo1.write(180);
     servo2.write(180);
   } else {
